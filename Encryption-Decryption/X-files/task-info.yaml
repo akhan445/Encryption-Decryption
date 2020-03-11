@@ -1,0 +1,201 @@
+type: edu
+custom_name: stage5
+files:
+- name: test/EncryptDecryptTest.java
+  visible: false
+  text: |
+    import encryptdecrypt.Main;
+    import org.hyperskill.hstest.v6.common.FileUtils;
+    import org.hyperskill.hstest.v6.stage.BaseStageTest;
+    import org.hyperskill.hstest.v6.testcase.CheckResult;
+    import org.hyperskill.hstest.v6.testcase.TestCase;
+
+    import java.io.IOException;
+    import java.nio.charset.StandardCharsets;
+    import java.nio.file.Files;
+    import java.nio.file.NoSuchFileException;
+    import java.nio.file.Path;
+    import java.nio.file.Paths;
+    import java.util.List;
+
+    public class EncryptDecryptTest extends BaseStageTest<String> {
+        public EncryptDecryptTest() {
+            super(Main.class);
+        }
+
+        @Override
+        public List<TestCase<String>> generate() {
+            return List.of(
+                new TestCase<String>()
+                    .addArguments(
+                        "-mode", "enc",
+                        "-key", "5",
+                        "-in", "in.txt",
+                        "-out", "output.txt"
+                    )
+                    .setAttach("\\jqhtrj%yt%m~ujwxpnqq&")
+                    .addFile("in.txt", "Welcome to hyperskill!"),
+
+                new TestCase<String>()
+                    .addArguments(
+                        "-key", "0",
+                        "-mode", "enc",
+                        "-in", "input.txt",
+                        "-out", "output.txt"
+                    )
+                    .setAttach("Hello")
+                    .addFile("input.txt", "Hello"),
+
+                new TestCase<String>()
+                    .addArguments(
+                        "-key", "1",
+                        "-in", "i.txt",
+                        "-out", "output.txt",
+                        "-mode", "enc"
+                    )
+                    .setAttach("123456789")
+                    .addFile("i.txt", "012345678"),
+
+                new TestCase<String>()
+                    .addArguments(
+                        "-mode", "dec",
+                        "-in", "input.txt",
+                        "-out", "output.txt",
+                        "-key", "5"
+                    )
+                    .setAttach("Welcome to hyperskill!")
+                    .addFile("input.txt", "\\jqhtrj%yt%m~ujwxpnqq&"),
+
+                new TestCase<String>()
+                    .addArguments(
+                        "-mode", "dec",
+                        "-key", "0",
+                        "-in", "input.txt",
+                        "-out", "output.txt"
+                    )
+                    .setAttach("Hi")
+                    .addFile("input.txt", "Hi"),
+
+                new TestCase<String>()
+                    .addArguments(
+                        "-mode", "dec",
+                        "-key", "1",
+                        "-in", "input.txt",
+                        "-out", "output.txt"
+                    )
+                    .setAttach("111122223333")
+                    .addFile("input.txt", "222233334444")
+            );
+        }
+
+        @Override
+        public CheckResult check(String reply, String clue) {
+            String fileName = "output.txt";
+            String output;
+
+            try {
+                Path path = Paths.get(FileUtils.CURRENT_DIR + fileName);
+                output = Files.readString(path, StandardCharsets.UTF_8);
+            } catch (NoSuchFileException e) {
+                return new CheckResult(false, "File output.txt not found!");
+            } catch (IOException e) {
+                return new CheckResult(false, "Cannot read from file!");
+            }
+
+            if (!output.trim().equals(clue.trim())) {
+                return new CheckResult(false, "Wrong result in the file!");
+            }
+
+            return new CheckResult(true);
+        }
+    }
+  learner_created: false
+- name: src/encryptdecrypt/Main.java
+  visible: true
+  text: |+
+    package encryptdecrypt;
+    import java.util.*;
+
+    public class Main {
+        public static void main(String[] args) {
+            //flag to keep track of what mode to execute    1- enc  2-dec
+            int mode = 1;
+            int key  = 0; //default
+            String message = "";
+            for (int i = 0; i < args.length; i++) {
+                if (args[i].equals("-mode")) {
+                    //only need to check if mode is decryption, default is already set to encryption
+                    if (args[i+1].equals("dec")) {
+                        mode = 2;
+                    }
+                    continue;
+                }
+                if (args[i].equals("-key")) {
+                    key = Integer.parseInt(args[i+1]);
+                    continue;
+                }
+                if (args[i].equals("-data")) {
+                    message += args[i+1];
+                    continue;
+                }
+            }
+
+
+            String result;
+            //perform encryption
+            if (mode == 1) {
+                result = encryptMessage(message, key);
+            } else { //decryption
+                result = decryptMessage(message, key);
+            }
+
+            System.out.println(result);
+        }
+        public static String encryptMessage(String input, int key) {
+            String encrypted = "";
+
+            for (int i = 0; i < input.length(); i++) {
+                char currentLetter = input.charAt(i);
+
+                int temp = (int) currentLetter + key;
+                encrypted = encrypted + (char) temp;
+    //            if (currentLetter >= 'a' && currentLetter <= 'z') {
+    //                //adding the key exceeds the end of alphabet
+    //                if ((int) currentLetter + key > 122) {
+    //                    int temp = (int) currentLetter + key - 122;
+    //                    temp = temp + 96; //offset to take into account 'a'
+    //
+    //                    encrypted = encrypted + (char) temp;
+    //                }
+    //                else {
+    //                    int temp = (int) currentLetter + key;
+    //                    encrypted = encrypted + (char) temp;
+    //                }
+    //
+    //                // int temp = currentLetter - 97;
+    //                // encrypted = encrypted +  (char) (122-temp);
+    //            }
+    //            else {
+    //                encrypted = encrypted + input.charAt(i);
+    //            }
+            }
+            return encrypted;
+        }
+
+        public static String decryptMessage(String input, int key) {
+            String decrypted = "";
+
+            for (int i = 0; i < input.length(); i++) {
+                char currentLetter = input.charAt(i);
+
+                int temp = (int) currentLetter - key;
+                decrypted = decrypted + (char) temp;
+            }
+            return decrypted;
+        }
+    }
+
+  learner_created: false
+feedback_link: https://hyperskill.org/projects/46/stages/249/implement
+status: Solved
+record: 4

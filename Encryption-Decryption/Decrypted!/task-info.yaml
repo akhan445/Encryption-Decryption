@@ -1,0 +1,76 @@
+type: edu
+custom_name: stage3
+files:
+- name: test/EncryptDecryptTest.java
+  visible: false
+  text: |
+    import encryptdecrypt.Main;
+    import org.hyperskill.hstest.v6.stage.BaseStageTest;
+    import org.hyperskill.hstest.v6.testcase.PredefinedIOTestCase;
+
+    import java.util.List;
+
+    public class EncryptDecryptTest extends BaseStageTest {
+        public EncryptDecryptTest() throws Exception {
+            super(Main.class);
+        }
+
+        @Override
+        public List<PredefinedIOTestCase> generate() {
+            return List.of(
+                new PredefinedIOTestCase(
+                    "enc\n" +
+                        "Welcome to hyperskill!\n" +
+                        "5",
+                    "\\jqhtrj%yt%m~ujwxpnqq&"),
+                new PredefinedIOTestCase(
+                    "enc\n" +
+                        "Hello\n" +
+                        "0",
+                    "Hello"),
+                new PredefinedIOTestCase(
+                    "enc\n" +
+                        "012345678\n" +
+                        "1",
+                    "123456789"),
+                new PredefinedIOTestCase(
+                    "dec\n" +
+                        "\\jqhtrj%yt%m~ujwxpnqq&\n" +
+                        "5",
+                    "Welcome to hyperskill!"),
+                new PredefinedIOTestCase(
+                    "dec\n" +
+                        "Hello\n" +
+                        "0",
+                    "Hello"),
+                new PredefinedIOTestCase(
+                    "dec\n" +
+                        "222233334444\n" +
+                        "1",
+                    "111122223333")
+            );
+        }
+    }
+  learner_created: false
+- name: src/encryptdecrypt/Main.java
+  visible: true
+  text: "package encryptdecrypt;\nimport java.util.*;\n\npublic class Main {\n   \
+    \ public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n\
+    \        String message = scanner.nextLine();\n        String encrypted = \"\"\
+    ;\n        int key = scanner.nextInt();\n\n        for (int i = 0; i < message.length();\
+    \ i++) {\n            char currentLetter = message.charAt(i);\n\n            if\
+    \ (currentLetter >= 'a' && currentLetter <= 'z') {\n                //adding the\
+    \ key exceeds the end of alphabet\n                if ((int) currentLetter + key\
+    \ > 122) {\n                    int temp = (int) currentLetter + key - 122;\n\
+    \                    temp = temp + 96; //offset to take into account 'a'\n   \
+    \                 \n                    encrypted = encrypted + (char) temp;\n\
+    \                }\n                else {\n                    int temp = (int)\
+    \ currentLetter + key;\n                    encrypted = encrypted + (char) temp;\n\
+    \                }\n                \n                // int temp = currentLetter\
+    \ - 97;\n                // encrypted = encrypted +  (char) (122-temp);\n    \
+    \        }\n            else {\n                encrypted = encrypted + message.charAt(i);\n\
+    \            }\n        }\n\n        System.out.println(encrypted);\n    }\n}\n"
+  learner_created: false
+feedback_link: https://hyperskill.org/projects/46/stages/247/implement
+status: Solved
+record: 1
